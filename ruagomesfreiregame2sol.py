@@ -46,17 +46,15 @@ class LearningAgent:
         # a - the index to the action in aa
         def selectactiontolearn(self,st,aa):
                 a = 0
-                # mod = False
-
+                mod = False
                 epsilon = 0.2
-
                 if random.random() < epsilon: 
                         for action in range(len(aa)):
                                 if self.qstates[st][action] > self.qstates[st][a]:
                                         a = action
-                                        # mod = True
-                        # if not mod:
-                        #         a = random.randrange(len(aa))
+                                        mod = True
+                        if not mod:
+                                a = random.randrange(len(aa))
                 else:
                         a = random.randrange(len(aa))
                 return a
@@ -75,12 +73,6 @@ class LearningAgent:
                 # print("select one action to see if I learned")
                 return a
 
-        def qlearning(self,state,action,nst,r):
-                alfa = 0.1 #learning rate - stochastically small
-                gamma = 0.91 #discount - typically from 0.8 to 0.99
-                qnew = (1-alfa) * self.qstates[state][action] + alfa * (r + gamma * max(self.qstates[nst]))
-                self.qstates[state][action] = qnew
-
         # this function is called after every action
         # ost - original state
         # nst - next state
@@ -95,5 +87,4 @@ class LearningAgent:
                 else: 
                         qnew = qold + alfa * (r + gamma * max(self.qstates[nst]) - qold)
                 self.qstates[ost][a] = qnew
-                #print("learn something from this data")
                 return
