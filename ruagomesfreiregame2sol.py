@@ -45,17 +45,20 @@ class LearningAgent:
         # returns
         # a - the index to the action in aa
         def selectactiontolearn(self,st,aa):
-                # define this function
-                # print("select one action to learn better")
                 a = 0
-                mod = False
-                for action in range(len(aa)):
-                        if self.qstates[st][action] > self.qstates[st][a]:
-                                a = action
-                                mod = True
-                if not mod:
+                # mod = False
+
+                epsilon = 0.2
+
+                if random.random() < epsilon: 
+                        for action in range(len(aa)):
+                                if self.qstates[st][action] > self.qstates[st][a]:
+                                        a = action
+                                        # mod = True
+                        # if not mod:
+                        #         a = random.randrange(len(aa))
+                else:
                         a = random.randrange(len(aa))
-                # define this function
                 return a
 
         # Select one action, used when evaluating
@@ -65,7 +68,6 @@ class LearningAgent:
         # returns
         # a - the index to the action in aa
         def selectactiontoexecute(self,st,aa):
-                # define this function
                 a = 0
                 for i in range(len(aa)):
                      if self.qstates[st][i] > self.qstates[st][a]:
@@ -91,8 +93,7 @@ class LearningAgent:
                 if qold == float("-inf"):
                         qnew = alfa * (r + gamma * max(max(self.qstates[nst]),0))
                 else: 
-                        qnew = qold + alfa * (r + gamma * max(max(self.qstates[nst]),0) - qold)
-                print(qnew)
+                        qnew = qold + alfa * (r + gamma * max(self.qstates[nst]) - qold)
                 self.qstates[ost][a] = qnew
                 #print("learn something from this data")
                 return
