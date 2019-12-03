@@ -18,7 +18,7 @@ class LearningAgent:
                 for i in range(nS):
                         self.qstates.append([] * nA)
                         self.visited.append([] * nA)
-                        for j in range(nA):
+                        for _ in range(nA):
                                 self.qstates[i].append(float('-inf'))
                                 self.visited[i].append(0)
                 # define this function
@@ -36,7 +36,7 @@ class LearningAgent:
                 a = 0
                 mod = False
                 for action in aa:
-                        if self.states[st][action] < self.states[st][a]:
+                        if self.qstates[st][action] < self.qstates[st][a]:
                                 a = action
                                 mod = True
                 if not mod:
@@ -53,14 +53,15 @@ class LearningAgent:
         def selectactiontoexecute(self,st,aa):
                 # define this function
                 a = 0
-               
+                for i in range(aa):
+                     if self.qstates[st][i] < self.qstates[st][a]:
+                        a = i
                 # print("select one action to see if I learned")
                 return a
 
         def qlearning(self,state,action,nst,r):
                 alfa = 0.1 #learning rate - stochastically small
                 gamma = 0.91 #discount - typically from 0.8 to 0.99
-                reward = -1 
                 qnew = (1-alfa) * self.qstates[state][action] + alfa * (r + gamma * max(self.qstates[nst]))
                 self.qstates[state][action] = qnew
 
@@ -70,7 +71,9 @@ class LearningAgent:
         # a - the index to the action taken
         # r - reward obtained
         def learn(self,ost,nst,a,r):
-                # define this function
+                alfa = 0.1 #learning rate - stochastically small
+                gamma = 0.91 #discount - typically from 0.8 to 0.99
+                qnew = (1-alfa) * self.qstates[ost][a] + alfa * (r + gamma * max(self.qstates[nst]))
+                self.qstates[ost][a] = qnew
                 #print("learn something from this data")
-                
                 return
