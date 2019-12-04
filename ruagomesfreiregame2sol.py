@@ -1,4 +1,6 @@
 import random
+import numpy
+from math import inf
 
 # LearningAgent to implement
 # no knowledeg about the environment can be used
@@ -13,13 +15,17 @@ class LearningAgent:
                 # define this function
                 self.nS = nS
                 self.nA = nA
-                self.epsilon = 0.9
+                self.epsilon = 1
                 self.qstates = list()
-                for _ in range(nS):
+                self.visited = list()
+                for _ in range(nS+1):
                         actions = list()
+                        visits = list()
                         for _ in range(nA):
-                                actions.append(float('-inf'))
+                                actions.append(-inf)
+                                visits.append(0)
                         self.qstates.append(actions)
+                        self.visited.append(visits)
         
         # Select one action, used when learning  
         # st - is the current state        
@@ -29,16 +35,12 @@ class LearningAgent:
         # a - the index to the action in aa
         def selectactiontolearn(self,st,aa):
                 a = 0
-                mod = False
-                if self.epsilon > 0.3:
-                        self.epsilon -= 0.001
-                if random.random() > self.epsilon: 
-                        for action in range(len(aa)):
-                                if self.qstates[st][action] > self.qstates[st][a]:
-                                        a = action
-                                        mod = True
+                if random.uniform(0,1) > self.epsilon: 
+                        a = numpy.argmax(self.qstates[st][0:len(aa)])
                 else:
-                        a = random.randrange(len(aa))
+                        if self.epsilon > 0.3:
+                                self.epsilon -= 0.001
+                        a = numpy.argmin(self.visited[st][0:len(aa)])
                 return a
 
         # Select one action, used when evaluating
@@ -48,10 +50,7 @@ class LearningAgent:
         # returns
         # a - the index to the action in aa
         def selectactiontoexecute(self,st,aa):
-                a = 0
-                for i in range(len(aa)):
-                     if self.qstates[st][i] > self.qstates[st][a]:
-                        a = i
+                a = numpy.argmax(self.qstates[st][0:len(aa)])
                 return a
 
         # this function is called after every action
@@ -60,12 +59,17 @@ class LearningAgent:
         # a - the index to the action taken
         # r - reward obtained
         def learn(self,ost,nst,a,r):
-                alfa = 0.4 #learning rate - stochastically small
+                alfa = 0.35 #learning rate - stochastically small
                 gamma = 0.9 #discount - typically from 0.8 to 0.99
                 qold = self.qstates[ost][a]
-                if qold == float("-inf"):
-                        qnew = alfa * (r + gamma * max(max(self.qstates[nst]),0))
+                self.visited[ost][a] += 1
+                maxstates = max(self.qstates[nst])
+                if maxstates == -inf:
+                        maxstates = 0
+
+                if qold == -inf:
+                        qnew = alfa * (r + gamma * maxstates)
                 else: 
-                        qnew = qold + alfa * (r + gamma * max(self.qstates[nst]) - qold)
+                        qnew = qold + alfa * (r + gamma * maxstates - qold)
                 self.qstates[ost][a] = qnew
                 return
