@@ -16,6 +16,7 @@ class LearningAgent:
                 self.qstates = list()
                 for _ in range(nS):
                         actions = list()
+                        visits= list()
                         for _ in range(nA):
                                 actions.append(float('-inf'))
                         self.qstates.append(actions)

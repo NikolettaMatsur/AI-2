@@ -15,7 +15,7 @@ class LearningAgent:
                 # define this function
                 self.nS = nS
                 self.nA = nA
-                self.epsilon = 1
+                self.epsilon = 0.9
                 self.qstates = list()
                 self.visited = list()
                 for _ in range(nS+1):
@@ -35,7 +35,7 @@ class LearningAgent:
         # a - the index to the action in aa
         def selectactiontolearn(self,st,aa):
                 a = 0
-                if random.uniform(0,1) > self.epsilon: 
+                if random.random() > self.epsilon: 
                         a = numpy.argmax(self.qstates[st][0:len(aa)])
                 else:
                         if self.epsilon > 0.3:
